@@ -592,7 +592,7 @@ function typeText(element, text, speed) {
 socket.on('file-uploaded', (file) => {
   folderFiles.push(file);
 
-  // If 404 folder is open, refresh it
+  // If a folder is open, refresh it
   const win = document.getElementById('folder-window');
   if (!win.classList.contains('hidden')) {
     const title = document.getElementById('folder-title').textContent;
@@ -600,7 +600,12 @@ socket.on('file-uploaded', (file) => {
       const contents = document.getElementById('folder-contents');
       const emptyMsg = contents.querySelector('.folder-empty');
       if (emptyMsg) emptyMsg.remove();
-      // Insert real files at the top
+      contents.prepend(createFileEntry(file));
+    } else if (title === 'Music' && file.ext === '.mp3') {
+      // Auto-refresh Music folder when MP3 uploaded
+      const contents = document.getElementById('folder-contents');
+      const emptyMsg = contents.querySelector('.folder-empty');
+      if (emptyMsg) emptyMsg.remove();
       contents.prepend(createFileEntry(file));
     }
   }
