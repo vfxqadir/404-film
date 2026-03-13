@@ -452,6 +452,8 @@ document.addEventListener('keydown', (e) => {
       closeWindow('text-editor');
     } else if (topWindow === 'folder-window') {
       closeWindow('folder-window');
+    } else if (topWindow === 'browser-window') {
+      closeBrowser();
     }
   }
 });
@@ -593,6 +595,259 @@ function stopWebcam() {
     webcamStream = null;
   }
 }
+
+// ── RETRO BROWSER ──
+const browserHistory = [];
+let browserHistoryIndex = -1;
+
+const browserPages = {
+  'void://home': {
+    title: 'NetVoid - Home',
+    html: `<div class="browser-page">
+      <div style="text-align:center;margin:30px 0 10px">
+        <div style="font-size:28px;color:#7af;letter-spacing:4px;text-shadow:0 0 10px rgba(120,170,255,0.3)">NetVoid</div>
+        <div style="font-size:10px;color:#555;margin-top:4px">Search the void...</div>
+      </div>
+      <div class="search-box">
+        <input type="text" id="browser-search" placeholder="Search..." onkeydown="if(event.key==='Enter')browserSearch()">
+        <br><button class="search-btn" onclick="browserSearch()">Search</button>
+      </div>
+      <div class="marquee-text">★ Welcome to NetVoid Browser v1.0 — The gateway to the underground ★ Your connection is encrypted ★ Browsing is anonymous ★</div>
+      <h2>Quick Links</h2>
+      <ul class="link-list">
+        <li><a onclick="browserGo('void://darkboard')">DarkBoard Forums</a><div class="link-desc">Anonymous discussion board — 12,847 active threads</div></li>
+        <li><a onclick="browserGo('void://tracker')">Network Tracker</a><div class="link-desc">Real-time connection monitoring</div></li>
+        <li><a onclick="browserGo('void://vault')">The Vault</a><div class="link-desc">Encrypted file storage — 2.4TB indexed</div></li>
+        <li><a onclick="browserGo('void://about')">About NetVoid</a><div class="link-desc">Browser information and credits</div></li>
+      </ul>
+      <div class="hit-counter">[ Visitors: 1,247,893 ] — Page loaded in 0.042s — NetVoid v1.0</div>
+    </div>`
+  },
+  'void://darkboard': {
+    title: 'DarkBoard — Anonymous Forums',
+    html: `<div class="browser-page">
+      <h1>◈ DarkBoard Forums</h1>
+      <div class="marquee-text">⚠ REMINDER: Do not share personal information. All posts are logged for 24h then purged. ⚠</div>
+      <h2>Recent Threads</h2>
+      <table>
+        <tr><th>Thread</th><th>Author</th><th>Replies</th><th>Last Post</th></tr>
+        <tr><td><a onclick="browserGo('void://darkboard/thread1')">Has anyone found the archive?</a></td><td style="color:#4a4">gh0st_</td><td>47</td><td>2 min ago</td></tr>
+        <tr><td>New encryption bypass method</td><td style="color:#4a4">null_ptr</td><td>132</td><td>8 min ago</td></tr>
+        <tr><td>WARNING: Node 7 compromised</td><td style="color:#f44">ADMIN</td><td>89</td><td>15 min ago</td></tr>
+        <tr><td>Looking for Charon — urgent</td><td style="color:#4a4">seekr_01</td><td>3</td><td>22 min ago</td></tr>
+        <tr><td>[CLOSED] The game has changed</td><td style="color:#f44">Pawn V</td><td>201</td><td>1 hr ago</td></tr>
+        <tr><td>Stream source locations leaked</td><td style="color:#4a4">anon_8472</td><td>67</td><td>1 hr ago</td></tr>
+        <tr><td>How to access .onion mirrors</td><td style="color:#4a4">r00tless</td><td>24</td><td>3 hr ago</td></tr>
+      </table>
+      <div class="hit-counter">Showing 7 of 12,847 threads — <a onclick="browserGo('void://home')">Back to Home</a></div>
+    </div>`
+  },
+  'void://darkboard/thread1': {
+    title: 'DarkBoard — Thread: Has anyone found the archive?',
+    html: `<div class="browser-page">
+      <h1>Has anyone found the archive?</h1>
+      <p style="color:#555">Posted by <span style="color:#4a4">gh0st_</span> — 47 replies</p>
+      <div style="border-left:2px solid #333;padding:8px 12px;margin:10px 0">
+        <p style="color:#4a4;font-size:11px">gh0st_ wrote:</p>
+        <p>I keep hearing about a hidden archive on Node 7. Files dating back years. Anyone know how to get in? The usual paths are dead.</p>
+      </div>
+      <div style="border-left:2px solid #333;padding:8px 12px;margin:10px 0">
+        <p style="color:#7af;font-size:11px">null_ptr wrote:</p>
+        <p>Don't go looking. Some doors are closed for a reason.</p>
+      </div>
+      <div style="border-left:2px solid #333;padding:8px 12px;margin:10px 0">
+        <p style="color:#f44;font-size:11px">Pawn V wrote:</p>
+        <p>The archive finds you. Not the other way around.</p>
+      </div>
+      <div style="border-left:2px solid #333;padding:8px 12px;margin:10px 0">
+        <p style="color:#4a4;font-size:11px">[DELETED] wrote:</p>
+        <p style="color:#444;font-style:italic">[This message has been removed by an administrator]</p>
+      </div>
+      <div class="hit-counter"><a onclick="browserGo('void://darkboard')">← Back to Forums</a></div>
+    </div>`
+  },
+  'void://tracker': {
+    title: 'Network Tracker — Live Connections',
+    html: `<div class="browser-page">
+      <h1>⟐ Network Tracker</h1>
+      <p>Active connections through your node:</p>
+      <table>
+        <tr><th>IP</th><th>Port</th><th>Protocol</th><th>Status</th><th>Location</th></tr>
+        <tr><td>███.███.42.1</td><td>443</td><td>TLS 1.3</td><td style="color:#4a4">ACTIVE</td><td>Unknown</td></tr>
+        <tr><td>███.███.89.14</td><td>8080</td><td>SOCKS5</td><td style="color:#4a4">ACTIVE</td><td>Proxy Chain</td></tr>
+        <tr><td>███.███.11.203</td><td>22</td><td>SSH</td><td style="color:#ff4">IDLE</td><td>Node 3</td></tr>
+        <tr><td>███.███.67.55</td><td>9001</td><td>TOR</td><td style="color:#4a4">ACTIVE</td><td>Exit Node</td></tr>
+        <tr><td>███.███.12.100</td><td>443</td><td>TLS 1.3</td><td style="color:#f44">DROPPED</td><td>Unknown</td></tr>
+        <tr><td>███.███.204.7</td><td>51820</td><td>WireGuard</td><td style="color:#4a4">ACTIVE</td><td>Relay</td></tr>
+      </table>
+      <p style="color:#f44;font-size:11px;margin-top:16px">⚠ WARNING: 1 connection dropped unexpectedly. Possible monitoring detected.</p>
+      <div class="hit-counter">Last updated: just now — Auto-refresh: 30s — <a onclick="browserGo('void://home')">Home</a></div>
+    </div>`
+  },
+  'void://vault': {
+    title: 'The Vault — Encrypted Storage',
+    html: `<div class="browser-page">
+      <h1>🔒 The Vault</h1>
+      <p>Encrypted file storage — End-to-end encrypted, zero-knowledge architecture.</p>
+      <table>
+        <tr><th>File</th><th>Size</th><th>Uploaded</th><th>Status</th></tr>
+        <tr><td>archive_2024_final.enc</td><td>847 MB</td><td>2 days ago</td><td style="color:#4a4">Encrypted</td></tr>
+        <tr><td>node7_dump.tar.gz</td><td>2.1 GB</td><td>5 days ago</td><td style="color:#4a4">Encrypted</td></tr>
+        <tr><td>stream_captures/</td><td>12.4 GB</td><td>1 week ago</td><td style="color:#ff4">Partial</td></tr>
+        <tr><td>chat_logs_export.db</td><td>340 MB</td><td>2 weeks ago</td><td style="color:#4a4">Encrypted</td></tr>
+        <tr><td>[REDACTED].mp4</td><td>4.7 GB</td><td>1 month ago</td><td style="color:#f44">Locked</td></tr>
+      </table>
+      <p style="font-size:11px;color:#555">Total: 2.4 TB across 14,203 files — Storage: 78% used</p>
+      <div class="hit-counter"><a onclick="browserGo('void://home')">Home</a></div>
+    </div>`
+  },
+  'void://about': {
+    title: 'About NetVoid Browser',
+    html: `<div class="browser-page">
+      <h1>About NetVoid Browser</h1>
+      <p>Version: 1.0.7 (Build 404)</p>
+      <p>Engine: VoidKit 2.3</p>
+      <p>Encryption: AES-256 / TLS 1.3</p>
+      <p>Routing: Multi-hop onion routing enabled</p>
+      <p>DNS: Encrypted DNS over HTTPS</p>
+      <h2>Features</h2>
+      <p>• Anonymous browsing with zero logs<br>• Built-in encryption for all traffic<br>• Multi-hop proxy chain support<br>• Automatic session purging<br>• Decentralized bookmark sync</p>
+      <h2>Legal</h2>
+      <p style="font-size:10px;color:#444">This software is provided as-is. The developers assume no responsibility for how this tool is used. All connections are routed through encrypted channels. No browsing data is stored or transmitted to third parties.</p>
+      <div class="hit-counter"><a onclick="browserGo('void://home')">Home</a></div>
+    </div>`
+  }
+};
+
+function openBrowser() {
+  const win = document.getElementById('browser-window');
+  win.classList.remove('hidden');
+  win.classList.remove('minimized');
+  pushWindow('browser-window');
+  if (browserHistory.length === 0) {
+    browserGo('void://home');
+  }
+}
+
+function closeBrowser() {
+  document.getElementById('browser-window').classList.add('hidden');
+  removeFromStack('browser-window');
+}
+
+function browserGo(url) {
+  const content = document.getElementById('browser-content');
+  const urlInput = document.getElementById('browser-url');
+  const status = document.getElementById('browser-status');
+  const titleEl = document.getElementById('browser-window-title');
+
+  urlInput.value = url;
+  status.textContent = 'Loading...';
+
+  // Loading animation
+  content.innerHTML = '<div class="browser-loading">Loading<span class="dots"></span></div>';
+
+  setTimeout(() => {
+    const page = browserPages[url];
+    if (page) {
+      content.innerHTML = page.html;
+      titleEl.textContent = 'NetVoid - ' + page.title;
+      status.textContent = 'Done';
+    } else if (url.startsWith('void://search?q=')) {
+      const query = decodeURIComponent(url.replace('void://search?q=', ''));
+      content.innerHTML = browserSearchResults(query);
+      titleEl.textContent = 'NetVoid - Search: ' + query;
+      status.textContent = 'Done — ' + Math.floor(Math.random() * 9000 + 1000) + ' results';
+    } else {
+      content.innerHTML = `<div class="browser-page"><div class="error-page">
+        <h1>Connection Failed</h1>
+        <p>NetVoid cannot establish a secure connection to<br><strong style="color:#7af">${url}</strong></p>
+        <p style="margin-top:16px">Error: VOID_ERR_CONNECTION_REFUSED (-404)</p>
+        <p style="margin-top:20px"><a onclick="browserGo('void://home')">Return to Home</a></p>
+      </div></div>`;
+      titleEl.textContent = 'NetVoid - Error';
+      status.textContent = 'Error: Connection refused';
+    }
+
+    // Update history
+    if (browserHistoryIndex < browserHistory.length - 1) {
+      browserHistory.splice(browserHistoryIndex + 1);
+    }
+    browserHistory.push(url);
+    browserHistoryIndex = browserHistory.length - 1;
+  }, 300 + Math.random() * 500);
+}
+
+function browserNavigate() {
+  const url = document.getElementById('browser-url').value.trim();
+  if (url) browserGo(url);
+}
+
+function browserBack() {
+  if (browserHistoryIndex > 0) {
+    browserHistoryIndex--;
+    const url = browserHistory[browserHistoryIndex];
+    document.getElementById('browser-url').value = url;
+    browserGo(url);
+    // Fix index since browserGo pushes to history
+    browserHistoryIndex = Math.max(0, browserHistoryIndex - 1);
+  }
+}
+
+function browserForward() {
+  if (browserHistoryIndex < browserHistory.length - 1) {
+    browserHistoryIndex++;
+    const url = browserHistory[browserHistoryIndex];
+    browserGo(url);
+  }
+}
+
+function browserRefresh() {
+  const url = document.getElementById('browser-url').value;
+  browserGo(url);
+}
+
+function browserHome() {
+  browserGo('void://home');
+}
+
+function browserSearch() {
+  const input = document.getElementById('browser-search');
+  if (input && input.value.trim()) {
+    browserGo('void://search?q=' + encodeURIComponent(input.value.trim()));
+  }
+}
+
+function browserSearchResults(query) {
+  const results = [
+    { title: 'DarkBoard Forums — ' + query, url: 'void://darkboard', desc: 'Discussion threads matching "' + query + '" — 47 results found' },
+    { title: query + ' — The Vault Archives', url: 'void://vault', desc: 'Encrypted files related to your search — Access restricted' },
+    { title: 'Network logs mentioning "' + query + '"', url: 'void://tracker', desc: 'Connection records from the past 24 hours' },
+    { title: '[REDACTED] — ' + query, url: '#', desc: 'This result has been removed by an administrator' },
+    { title: query + ' discussion — Node 7 Archive', url: '#', desc: 'Archived thread from 2023 — May no longer be accessible' },
+  ];
+
+  let html = `<div class="browser-page">
+    <h1>Search results for "${query}"</h1>
+    <p style="color:#555;font-size:11px">About ${Math.floor(Math.random() * 9000 + 1000)} results (0.${Math.floor(Math.random() * 90 + 10)}s)</p>
+    <ul class="link-list">`;
+
+  results.forEach(r => {
+    html += `<li><a onclick="browserGo('${r.url}')">${r.title}</a><div class="link-desc">${r.desc}</div></li>`;
+  });
+
+  html += `</ul><div class="hit-counter"><a onclick="browserGo('void://home')">Home</a></div></div>`;
+  return html;
+}
+
+// Browser icon double-click
+document.getElementById('browser-icon').addEventListener('dblclick', () => {
+  openBrowser();
+});
+
+// Enter key in address bar
+document.getElementById('browser-url').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') browserNavigate();
+});
 
 // ── MINIMIZE / MAXIMIZE BUTTONS ──
 document.querySelectorAll('.win-btn.minimize').forEach(btn => {

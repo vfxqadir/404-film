@@ -121,6 +121,54 @@
         <div class="icon-img chat-app-icon">💬</div>
         <span>CHAT</span>
       </div>
+      <div class="desktop-icon" id="browser-icon">
+        <div class="icon-img browser-app-icon">🌐</div>
+        <span>NetVoid</span>
+      </div>
+    </div>
+
+    <!-- RETRO BROWSER WINDOW -->
+    <div id="browser-window" class="window hidden">
+      <div class="window-titlebar browser-titlebar">
+        <span id="browser-window-title">NetVoid Browser - [Untitled]</span>
+        <div class="window-controls">
+          <button class="win-btn minimize">─</button>
+          <button class="win-btn maximize">□</button>
+          <button class="win-btn close" onclick="closeBrowser()">✕</button>
+        </div>
+      </div>
+      <!-- Menu bar -->
+      <div class="browser-menubar">
+        <span class="browser-menu-item">File</span>
+        <span class="browser-menu-item">Edit</span>
+        <span class="browser-menu-item">View</span>
+        <span class="browser-menu-item">Favorites</span>
+        <span class="browser-menu-item">Tools</span>
+        <span class="browser-menu-item">Help</span>
+      </div>
+      <!-- Toolbar -->
+      <div class="browser-toolbar">
+        <button class="browser-nav-btn" onclick="browserBack()" title="Back">◀</button>
+        <button class="browser-nav-btn" onclick="browserForward()" title="Forward">▶</button>
+        <button class="browser-nav-btn" onclick="browserRefresh()" title="Refresh">↻</button>
+        <button class="browser-nav-btn" onclick="browserHome()" title="Home">🏠</button>
+        <div class="browser-address-bar">
+          <span class="address-label">Address</span>
+          <div class="address-input-wrap">
+            <input type="text" id="browser-url" value="void://home" spellcheck="false" autocomplete="off">
+          </div>
+          <button class="browser-go-btn" onclick="browserNavigate()">Go</button>
+        </div>
+      </div>
+      <!-- Content -->
+      <div class="browser-content" id="browser-content">
+        <!-- Pages injected here -->
+      </div>
+      <!-- Status bar -->
+      <div class="browser-statusbar">
+        <span id="browser-status">Done</span>
+        <span class="browser-security">🔒 128-bit encryption</span>
+      </div>
     </div>
 
     <!-- FOLDER WINDOW -->
