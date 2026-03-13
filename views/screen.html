@@ -277,58 +277,6 @@
       <div class="good-game-text">It Was A Good Game</div>
     </div>
 
-    <!-- APP WINDOWS (Spotify, Google, YouTube) -->
-    <div id="app-window-spotify" class="window app-window hidden">
-      <div class="window-titlebar">
-        <div class="app-title-row">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg" class="titlebar-icon" alt="">
-          <span>Spotify</span>
-        </div>
-        <div class="window-controls">
-          <button class="win-btn minimize">─</button>
-          <button class="win-btn maximize">□</button>
-          <button class="win-btn close" onclick="closeAppWindow('spotify')">✕</button>
-        </div>
-      </div>
-      <div class="window-body app-body">
-        <iframe id="iframe-spotify" src="" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
-      </div>
-    </div>
-
-    <div id="app-window-google" class="window app-window hidden">
-      <div class="window-titlebar">
-        <div class="app-title-row">
-          <img src="https://www.google.com/favicon.ico" class="titlebar-icon" alt="">
-          <span>Google</span>
-        </div>
-        <div class="window-controls">
-          <button class="win-btn minimize">─</button>
-          <button class="win-btn maximize">□</button>
-          <button class="win-btn close" onclick="closeAppWindow('google')">✕</button>
-        </div>
-      </div>
-      <div class="window-body app-body">
-        <iframe id="iframe-google" src="" frameborder="0" allowfullscreen></iframe>
-      </div>
-    </div>
-
-    <div id="app-window-youtube" class="window app-window hidden">
-      <div class="window-titlebar">
-        <div class="app-title-row">
-          <img src="https://www.youtube.com/favicon.ico" class="titlebar-icon" alt="">
-          <span>YouTube</span>
-        </div>
-        <div class="window-controls">
-          <button class="win-btn minimize">─</button>
-          <button class="win-btn maximize">□</button>
-          <button class="win-btn close" onclick="closeAppWindow('youtube')">✕</button>
-        </div>
-      </div>
-      <div class="window-body app-body">
-        <iframe id="iframe-youtube" src="" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
-      </div>
-    </div>
-
     <!-- TASKBAR -->
     <div id="taskbar">
       <div class="taskbar-left">
@@ -338,16 +286,6 @@
         <div class="taskbar-item hidden" id="taskbar-editor" onclick="restoreWindow('text-editor')">📝 <span class="taskbar-label">Editor</span></div>
         <div class="taskbar-item hidden" id="taskbar-video" onclick="restoreWindow('video-player')">▶ <span class="taskbar-label">Player</span></div>
         <div class="taskbar-item hidden" id="taskbar-chat" onclick="restoreChat()">💬 <span class="taskbar-label">CHAT</span></div>
-        <div class="taskbar-divider"></div>
-        <div class="taskbar-item taskbar-app" onclick="openAppWindow('spotify')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg" class="taskbar-app-icon" alt="Spotify">
-        </div>
-        <div class="taskbar-item taskbar-app" onclick="openAppWindow('google')">
-          <img src="https://www.google.com/favicon.ico" class="taskbar-app-icon" alt="Google">
-        </div>
-        <div class="taskbar-item taskbar-app" onclick="openAppWindow('youtube')">
-          <img src="https://www.youtube.com/favicon.ico" class="taskbar-app-icon" alt="YouTube">
-        </div>
       </div>
       <div class="taskbar-right">
         <div class="tray-icon" id="tray-volume" onclick="toggleTrayPopup('volume-popup')">

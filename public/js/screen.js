@@ -438,10 +438,6 @@ document.addEventListener('keydown', (e) => {
       closeWindow('text-editor');
     } else if (topWindow === 'folder-window') {
       closeWindow('folder-window');
-    } else if (topWindow.startsWith('app-window-')) {
-      const app = topWindow.replace('app-window-', '');
-      closeAppWindow(app);
-    }
   }
 });
 
@@ -581,36 +577,6 @@ function stopWebcam() {
     webcamStream.getTracks().forEach(t => t.stop());
     webcamStream = null;
   }
-}
-
-// ── APP WINDOWS (Spotify, Google, YouTube) ──
-const appUrls = {
-  spotify: 'https://open.spotify.com',
-  google: 'https://www.google.com',
-  youtube: 'https://www.youtube.com'
-};
-
-const appTabs = {};
-
-function openAppWindow(app) {
-  const win = document.getElementById('app-window-' + app);
-
-  win.classList.remove('hidden');
-  win.classList.remove('minimized');
-  pushWindow('app-window-' + app);
-
-  // Open in a normal browser tab (shares cookies/sessions — no login needed)
-  if (!appTabs[app] || appTabs[app].closed) {
-    appTabs[app] = window.open(appUrls[app], '_blank');
-  } else {
-    appTabs[app].focus();
-  }
-}
-
-function closeAppWindow(app) {
-  const win = document.getElementById('app-window-' + app);
-  win.classList.add('hidden');
-  removeFromStack('app-window-' + app);
 }
 
 // ── MINIMIZE / MAXIMIZE BUTTONS ──
