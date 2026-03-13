@@ -23,6 +23,9 @@ const BIOS_LINES = [
 
 async function runBootSequence() {
   const output = document.getElementById('bios-output');
+  // Remove initial cursor
+  const cursor = output.querySelector('.bios-cursor');
+  if (cursor) cursor.remove();
 
   for (const line of BIOS_LINES) {
     await sleep(line.delay);
