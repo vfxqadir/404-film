@@ -590,45 +590,27 @@ const appUrls = {
   youtube: 'https://www.youtube.com'
 };
 
-const appPopups = {};
+const appTabs = {};
 
 function openAppWindow(app) {
   const win = document.getElementById('app-window-' + app);
-  const iframe = document.getElementById('iframe-' + app);
-
-  // Try iframe first
-  if (!iframe.src || iframe.src === '' || iframe.src === 'about:blank') {
-    iframe.src = appUrls[app];
-  }
 
   win.classList.remove('hidden');
   win.classList.remove('minimized');
   pushWindow('app-window-' + app);
 
-  // Also open in popup as fallback (sites block iframes)
-  // This gives a real working window while the fake OS window shows behind
-  if (!appPopups[app] || appPopups[app].closed) {
-    appPopups[app] = window.open(
-      appUrls[app],
-      app + '-popup',
-      'width=950,height=650,left=100,top=50,toolbar=no,menubar=no,location=no'
-    );
+  // Open in a normal browser tab (shares cookies/sessions — no login needed)
+  if (!appTabs[app] || appTabs[app].closed) {
+    appTabs[app] = window.open(appUrls[app], '_blank');
   } else {
-    appPopups[app].focus();
+    appTabs[app].focus();
   }
 }
 
 function closeAppWindow(app) {
   const win = document.getElementById('app-window-' + app);
-  const iframe = document.getElementById('iframe-' + app);
   win.classList.add('hidden');
-  iframe.src = '';
   removeFromStack('app-window-' + app);
-
-  // Close popup too
-  if (appPopups[app] && !appPopups[app].closed) {
-    appPopups[app].close();
-  }
 }
 
 // ── MINIMIZE / MAXIMIZE BUTTONS ──
