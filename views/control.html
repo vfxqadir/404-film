@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control Panel</title>
+<link rel="stylesheet" href="/css/control.css">
+</head>
+<body>
+  <div id="control-panel">
+    <h1 class="panel-title">🎬 CONTROL PANEL</h1>
+    <div class="connection-status" id="connection-status">
+      <span class="dot"></span> Connecting...
+    </div>
+
+    <div class="panel-grid">
+      <!-- FILE UPLOAD -->
+      <section class="panel-section">
+        <h2>📁 File Upload</h2>
+        <p class="section-desc">Upload .txt or .mp4 files → appears in unnamed folder on /screen</p>
+        <div class="upload-zone" id="upload-zone">
+          <div class="upload-icon">⬆</div>
+          <p>Drag & drop files here</p>
+          <p class="small">or click to browse</p>
+          <input type="file" id="file-input" accept=".txt,.mp4" multiple hidden>
+        </div>
+        <div class="upload-progress hidden" id="upload-progress">
+          <div class="progress-bar-ctrl">
+            <div class="progress-fill-ctrl" id="upload-fill"></div>
+          </div>
+          <span id="upload-status">Uploading...</span>
+        </div>
+        <div class="file-list" id="uploaded-files">
+          <!-- Uploaded files listed here -->
+        </div>
+      </section>
+
+      <!-- CHAT CONTROL -->
+      <section class="panel-section">
+        <h2>💬 Chat (as Pawn V)</h2>
+        <p class="section-desc">Messages appear in the CHAT app on /screen with typing animation</p>
+        <div class="chat-control">
+          <div class="chat-history" id="chat-history">
+            <!-- Chat log -->
+          </div>
+          <div class="chat-input-row">
+            <input type="text" id="charon-input" placeholder="Type as Pawn V..." autocomplete="off">
+            <button id="charon-send" class="btn btn-send">Send</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TRIGGERS -->
+      <section class="panel-section triggers-section">
+        <h2>⚡ Triggers</h2>
+        <p class="section-desc">Scene triggers — click to activate on /screen</p>
+        <div class="trigger-grid">
+          <button class="btn trigger-btn" data-trigger="camera-light">
+            <span class="trigger-icon">🔴</span>
+            Camera Light On
+          </button>
+          <button class="btn trigger-btn" data-trigger="live-feed">
+            <span class="trigger-icon">📹</span>
+            Show Live Feed
+          </button>
+          <button class="btn trigger-btn" data-trigger="blackout">
+            <span class="trigger-icon">⬛</span>
+            Black Out Screen
+          </button>
+          <button class="btn trigger-btn" data-trigger="viewer-count">
+            <span class="trigger-icon">👁</span>
+            Show Viewer Count
+          </button>
+          <button class="btn trigger-btn btn-danger" data-trigger="good-game">
+            <span class="trigger-icon">🎮</span>
+            It Was A Good Game
+          </button>
+        </div>
+        <div class="active-triggers" id="active-triggers">
+          <h3>Active:</h3>
+          <div id="active-list">None</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/control.js"></script>
+</body>
+</html>

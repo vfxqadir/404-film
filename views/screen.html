@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desktop</title>
+<link rel="stylesheet" href="/css/screen.css">
+</head>
+<body>
+  <!-- BOOT SEQUENCE -->
+  <div id="boot-screen">
+    <div id="bios-output"></div>
+  </div>
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="hidden">
+    <div class="login-container">
+      <svg class="anon-mask" viewBox="0 0 200 200" width="120" height="120">
+        <!-- Anonymous/Guy Fawkes style mask -->
+        <defs>
+          <radialGradient id="maskGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#1a5c1a" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </radialGradient>
+        </defs>
+        <!-- Face outline -->
+        <ellipse cx="100" cy="105" rx="62" ry="72" fill="none" stroke="#1a5c1a" stroke-width="2"/>
+        <!-- Inner face shape -->
+        <path d="M55 75 Q60 45 100 38 Q140 45 145 75" fill="none" stroke="#1a5c1a" stroke-width="1.5"/>
+        <!-- Forehead -->
+        <path d="M60 70 Q100 55 140 70" fill="none" stroke="#145514" stroke-width="1"/>
+        <!-- Left eye -->
+        <ellipse cx="78" cy="90" rx="14" ry="8" fill="none" stroke="#22aa22" stroke-width="2"/>
+        <ellipse cx="78" cy="90" rx="6" ry="4" fill="#1a5c1a"/>
+        <!-- Right eye -->
+        <ellipse cx="122" cy="90" rx="14" ry="8" fill="none" stroke="#22aa22" stroke-width="2"/>
+        <ellipse cx="122" cy="90" rx="6" ry="4" fill="#1a5c1a"/>
+        <!-- Eyebrows -->
+        <path d="M60 78 Q78 68 95 80" fill="none" stroke="#22aa22" stroke-width="2"/>
+        <path d="M140 78 Q122 68 105 80" fill="none" stroke="#22aa22" stroke-width="2"/>
+        <!-- Nose -->
+        <path d="M100 95 L96 112 Q100 115 104 112 Z" fill="none" stroke="#1a5c1a" stroke-width="1.5"/>
+        <!-- Mustache -->
+        <path d="M75 120 Q82 128 100 122 Q118 128 125 120" fill="none" stroke="#22aa22" stroke-width="2"/>
+        <path d="M80 122 Q90 130 100 124" fill="none" stroke="#1a5c1a" stroke-width="1"/>
+        <path d="M120 122 Q110 130 100 124" fill="none" stroke="#1a5c1a" stroke-width="1"/>
+        <!-- Mouth/Smile -->
+        <path d="M82 132 Q100 145 118 132" fill="none" stroke="#22aa22" stroke-width="1.5"/>
+        <!-- Goatee -->
+        <path d="M95 140 Q100 155 105 140" fill="none" stroke="#1a5c1a" stroke-width="1.5"/>
+        <!-- Cheek lines -->
+        <path d="M55 100 Q50 120 58 140" fill="none" stroke="#145514" stroke-width="1"/>
+        <path d="M145 100 Q150 120 142 140" fill="none" stroke="#145514" stroke-width="1"/>
+        <!-- Hat brim -->
+        <path d="M38 72 Q100 58 162 72" fill="none" stroke="#1a5c1a" stroke-width="2"/>
+        <!-- Hat top -->
+        <path d="M58 72 Q60 35 100 28 Q140 35 142 72" fill="none" stroke="#1a5c1a" stroke-width="1.5"/>
+        <!-- Glow -->
+        <circle cx="100" cy="100" r="90" fill="url(#maskGlow)"/>
+      </svg>
+      <div class="login-form">
+        <div class="login-field">
+          <label>user:</label>
+          <input type="text" id="login-user" value="anonymous" readonly spellcheck="false">
+        </div>
+        <div class="login-field">
+          <label>pass:</label>
+          <input type="password" id="login-pass" value="••••••••" readonly>
+        </div>
+        <button id="login-btn">[ LOGIN ]</button>
+        <div class="login-hint">Press Enter</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLITCH OVERLAY -->
+  <div id="glitch-overlay" class="hidden"></div>
+
+  <!-- 404 FOLDER LOGIN -->
+  <div id="folder-login-overlay" class="hidden">
+    <div class="folder-login-box">
+      <div class="folder-login-header">
+        <span class="lock-icon">🔒</span> ENCRYPTED DIRECTORY
+      </div>
+      <div class="folder-login-body">
+        <div class="folder-login-warning">⚠ ACCESS RESTRICTED — AUTHORIZATION REQUIRED</div>
+        <div class="login-field">
+          <label>pass:</label>
+          <input type="password" id="folder-login-pass" placeholder="enter password" autocomplete="off">
+        </div>
+        <div class="folder-login-error hidden" id="folder-login-error">ACCESS DENIED</div>
+        <div class="folder-login-actions">
+          <button id="folder-login-btn">[ AUTHENTICATE ]</button>
+          <button id="folder-login-cancel">[ CANCEL ]</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESKTOP -->
+  <div id="desktop" class="hidden">
+    <!-- Desktop Icons -->
+    <div id="desktop-icons">
+      <div class="desktop-icon" data-folder="downloads">
+        <div class="icon-img folder-icon">📁</div>
+        <span>Downloads</span>
+      </div>
+      <div class="desktop-icon" data-folder="documents">
+        <div class="icon-img folder-icon">📁</div>
+        <span>Documents</span>
+      </div>
+      <div class="desktop-icon" data-folder="music">
+        <div class="icon-img folder-icon">📁</div>
+        <span>Music</span>
+      </div>
+      <div class="desktop-icon" data-folder="404">
+        <div class="icon-img folder-icon folder-404">📁</div>
+        <span>404</span>
+      </div>
+      <div class="desktop-icon" id="chat-icon">
+        <div class="icon-img chat-app-icon">💬</div>
+        <span>CHAT</span>
+      </div>
+    </div>
+
+    <!-- FOLDER WINDOW -->
+    <div id="folder-window" class="window hidden">
+      <div class="window-titlebar">
+        <span id="folder-title">Folder</span>
+        <div class="window-controls">
+          <button class="win-btn minimize">─</button>
+          <button class="win-btn maximize">□</button>
+          <button class="win-btn close" onclick="closeWindow('folder-window')">✕</button>
+        </div>
+      </div>
+      <div class="window-toolbar">
+        <span class="toolbar-path" id="folder-path">/home/user/</span>
+      </div>
+      <div class="window-body" id="folder-contents">
+        <!-- Files injected here -->
+      </div>
+    </div>
+
+    <!-- TEXT EDITOR WINDOW -->
+    <div id="text-editor" class="window hidden">
+      <div class="window-titlebar">
+        <span id="editor-title">Text Editor</span>
+        <div class="window-controls">
+          <button class="win-btn minimize">─</button>
+          <button class="win-btn maximize">□</button>
+          <button class="win-btn close" onclick="closeWindow('text-editor')">✕</button>
+        </div>
+      </div>
+      <div class="window-toolbar">
+        <span class="toolbar-item">File</span>
+        <span class="toolbar-item">Edit</span>
+        <span class="toolbar-item">View</span>
+      </div>
+      <div class="window-body editor-body">
+        <div class="line-numbers" id="line-numbers"></div>
+        <pre id="editor-content"></pre>
+      </div>
+    </div>
+
+    <!-- VIDEO PLAYER WINDOW (CCTV Style) -->
+    <div id="video-player" class="window hidden">
+      <div class="window-titlebar">
+        <span id="player-title">Media Player</span>
+        <div class="window-controls">
+          <button class="win-btn minimize">─</button>
+          <button class="win-btn maximize">□</button>
+          <button class="win-btn close" onclick="closeVideoPlayer()">✕</button>
+        </div>
+      </div>
+      <div class="window-body video-body">
+        <div class="cctv-container">
+          <video id="video-element" autoplay></video>
+          <div class="cctv-overlay">
+            <div class="scanlines"></div>
+            <div class="grain"></div>
+          </div>
+          <div class="cctv-timestamp" id="cctv-timestamp">CAM 01 — 00:00:00</div>
+          <div class="cctv-rec">● REC</div>
+        </div>
+        <div class="video-controls">
+          <button id="play-pause-btn" onclick="togglePlayPause()">⏸</button>
+          <div class="progress-bar" id="progress-bar" onclick="seekVideo(event)">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <span id="video-time">00:00 / 00:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT WINDOW (BBS Terminal) -->
+    <div id="chat-window" class="hidden">
+      <div class="chat-titlebar">
+        <span class="chat-titlebar-text">THE VOID v3.2</span>
+        <div class="window-controls">
+          <button class="win-btn minimize">─</button>
+          <button class="win-btn maximize">□</button>
+          <button class="win-btn close" onclick="closeChat()">✕</button>
+        </div>
+      </div>
+      <div class="bbs-header">
+        <div class="bbs-title">
+          ╔══════════════════════════════════════════════════════════════╗<br>
+          ║&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T H E &nbsp; V O I D &nbsp; v3.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;║<br>
+          ║&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ ENCRYPTED CHANNEL ]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;║<br>
+          ╚══════════════════════════════════════════════════════════════╝
+        </div>
+        <div class="bbs-status">
+          <span class="status-item">Active Users: <span class="cyan">2</span></span>
+          <span class="status-item">Latency: <span class="cyan">42ms</span></span>
+          <span class="status-item">Node: <span class="cyan">7</span></span>
+          <span class="status-dot online">●</span> CONNECTED
+        </div>
+      </div>
+      <div class="bbs-main">
+        <div class="bbs-sidebar">
+          <div class="sidebar-header">── USERS ──</div>
+          <div class="user-entry actor-user">
+            <span class="online-dot">●</span> <span id="actor-name-display">Mubashir</span>
+          </div>
+          <div class="user-entry charon-user">
+            <span class="online-dot">●</span> Pawn V
+          </div>
+          <div class="sidebar-footer">
+            ────────────<br>
+            <span class="dim">2 online</span>
+          </div>
+        </div>
+        <div class="bbs-chat-area">
+          <div class="chat-messages" id="chat-messages">
+            <div class="system-msg">*** Channel joined. End-to-end encryption active. ***</div>
+            <div class="system-msg">*** Type /quit to disconnect ***</div>
+          </div>
+          <div class="chat-input-area">
+            <span class="input-prompt">&gt;&gt; </span>
+            <input type="text" id="chat-input" placeholder="" autocomplete="off" spellcheck="false">
+          </div>
+        </div>
+      </div>
+      <div class="bbs-footer">
+        <span>[F1] Help</span>
+        <span>[F5] Refresh</span>
+        <span>[ESC] Disconnect</span>
+      </div>
+    </div>
+
+    <!-- TRIGGER OVERLAYS -->
+    <div id="camera-light" class="trigger-overlay hidden">
+      <div class="camera-dot"></div>
+    </div>
+
+    <div id="live-feed-overlay" class="trigger-overlay hidden">
+      <div class="live-feed-container">
+        <video id="webcam-feed" autoplay muted playsinline></video>
+        <div class="cctv-overlay">
+          <div class="scanlines"></div>
+          <div class="grain"></div>
+        </div>
+        <div class="live-feed-label">LIVE — CAM 02</div>
+      </div>
+    </div>
+
+    <div id="blackout-overlay" class="trigger-overlay hidden"></div>
+
+    <div id="viewer-count-overlay" class="trigger-overlay hidden">
+      <div class="viewer-text">
+        <div class="viewer-line1">You have been live.</div>
+        <div class="viewer-line2">2,847 viewers</div>
+      </div>
+    </div>
+
+    <div id="good-game-overlay" class="trigger-overlay hidden">
+      <div class="good-game-text">It Was A Good Game</div>
+    </div>
+
+    <!-- TASKBAR -->
+    <div id="taskbar">
+      <div class="taskbar-left">
+        <div class="start-btn" id="start-btn">⬡</div>
+        <div class="taskbar-divider"></div>
+        <div class="taskbar-item" id="taskbar-folder" onclick="restoreWindow('folder-window')">📁 <span class="taskbar-label hidden" id="taskbar-folder-label">Folder</span></div>
+        <div class="taskbar-item hidden" id="taskbar-editor" onclick="restoreWindow('text-editor')">📝 <span class="taskbar-label">Editor</span></div>
+        <div class="taskbar-item hidden" id="taskbar-video" onclick="restoreWindow('video-player')">▶ <span class="taskbar-label">Player</span></div>
+        <div class="taskbar-item hidden" id="taskbar-chat" onclick="restoreChat()">💬 <span class="taskbar-label">CHAT</span></div>
+      </div>
+      <div class="taskbar-right">
+        <div class="tray-icon" id="tray-volume" onclick="toggleTrayPopup('volume-popup')">
+          <span id="volume-icon">🔊</span>
+        </div>
+        <div class="tray-icon" id="tray-wifi" onclick="toggleTrayPopup('wifi-popup')">🌐</div>
+        <div class="tray-icon" id="tray-brightness" onclick="toggleTrayPopup('brightness-popup')">☀</div>
+        <div class="tray-icon" id="tray-battery" onclick="toggleTrayPopup('battery-popup')">
+          <span id="battery-icon">🔋</span>
+        </div>
+        <div class="taskbar-divider"></div>
+        <div class="taskbar-clock" id="taskbar-clock">00:00</div>
+      </div>
+
+      <!-- TRAY POPUPS -->
+      <!-- Volume -->
+      <div class="tray-popup hidden" id="volume-popup">
+        <div class="tray-popup-header">Volume</div>
+        <div class="tray-popup-body">
+          <div class="slider-row">
+            <span class="slider-icon">🔇</span>
+            <input type="range" id="volume-slider" min="0" max="100" value="72" class="tray-slider">
+            <span class="slider-icon">🔊</span>
+          </div>
+          <div class="slider-value"><span id="volume-value">72</span>%</div>
+          <div class="tray-toggle-row">
+            <span>Mute</span>
+            <div class="tray-toggle active" id="volume-mute-toggle" onclick="toggleMute()">
+              <div class="tray-toggle-knob"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WiFi -->
+      <div class="tray-popup hidden" id="wifi-popup">
+        <div class="tray-popup-header">Wi-Fi</div>
+        <div class="tray-popup-body">
+          <div class="tray-toggle-row">
+            <span>Wi-Fi</span>
+            <div class="tray-toggle active" id="wifi-toggle">
+              <div class="tray-toggle-knob"></div>
+            </div>
+          </div>
+          <div class="wifi-list">
+            <div class="wifi-entry connected">
+              <div class="wifi-info">
+                <span class="wifi-name">NETGEAR-5G-HOME</span>
+                <span class="wifi-status">Connected, secured</span>
+              </div>
+              <div class="wifi-bars">
+                <div class="bar bar1 active"></div>
+                <div class="bar bar2 active"></div>
+                <div class="bar bar3 active"></div>
+                <div class="bar bar4 active"></div>
+              </div>
+            </div>
+            <div class="wifi-entry">
+              <div class="wifi-info">
+                <span class="wifi-name">SKY-ROUTER-2.4G</span>
+                <span class="wifi-status">Secured</span>
+              </div>
+              <div class="wifi-bars">
+                <div class="bar bar1 active"></div>
+                <div class="bar bar2 active"></div>
+                <div class="bar bar3 active"></div>
+                <div class="bar bar4"></div>
+              </div>
+            </div>
+            <div class="wifi-entry">
+              <div class="wifi-info">
+                <span class="wifi-name">BT-Hub6-3KPF</span>
+                <span class="wifi-status">Secured</span>
+              </div>
+              <div class="wifi-bars">
+                <div class="bar bar1 active"></div>
+                <div class="bar bar2 active"></div>
+                <div class="bar bar3"></div>
+                <div class="bar bar4"></div>
+              </div>
+            </div>
+            <div class="wifi-entry">
+              <div class="wifi-info">
+                <span class="wifi-name">VM3847291</span>
+                <span class="wifi-status">Secured</span>
+              </div>
+              <div class="wifi-bars">
+                <div class="bar bar1 active"></div>
+                <div class="bar bar2"></div>
+                <div class="bar bar3"></div>
+                <div class="bar bar4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Brightness -->
+      <div class="tray-popup hidden" id="brightness-popup">
+        <div class="tray-popup-header">Brightness</div>
+        <div class="tray-popup-body">
+          <div class="slider-row">
+            <span class="slider-icon">🌑</span>
+            <input type="range" id="brightness-slider" min="20" max="100" value="100" class="tray-slider">
+            <span class="slider-icon">☀️</span>
+          </div>
+          <div class="slider-value"><span id="brightness-value">100</span>%</div>
+          <div class="tray-toggle-row">
+            <span>Night Light</span>
+            <div class="tray-toggle" id="nightlight-toggle" onclick="toggleNightLight()">
+              <div class="tray-toggle-knob"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Battery -->
+      <div class="tray-popup hidden" id="battery-popup">
+        <div class="tray-popup-header">Battery</div>
+        <div class="tray-popup-body">
+          <div class="battery-display">
+            <div class="battery-graphic">
+              <div class="battery-shell">
+                <div class="battery-fill-bar" id="battery-fill-bar"></div>
+              </div>
+              <div class="battery-tip"></div>
+            </div>
+            <div class="battery-info">
+              <div class="battery-percent" id="battery-percent">78%</div>
+              <div class="battery-status" id="battery-status">⚡ Charging</div>
+              <div class="battery-time" id="battery-time">1h 12m until full</div>
+            </div>
+          </div>
+          <div class="tray-toggle-row">
+            <span>Battery Saver</span>
+            <div class="tray-toggle" id="battery-saver-toggle">
+              <div class="tray-toggle-knob"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRIGHTNESS OVERLAY -->
+  <div id="brightness-overlay"></div>
+  <!-- NIGHT LIGHT OVERLAY -->
+  <div id="nightlight-overlay" class="hidden"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/screen.js"></script>
+</body>
+</html>
