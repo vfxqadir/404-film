@@ -38,6 +38,11 @@ const upload = multer({
 app.use(express.static('public'));
 app.use(express.json());
 
+// Health check
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // Routes
 app.get('/screen', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'screen.html'));
