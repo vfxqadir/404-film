@@ -176,7 +176,7 @@ function generateFakeFiles() {
 const fakeFiles = generateFakeFiles();
 
 // ── FOLDER WINDOW ──
-function openFolder(name) {
+async function openFolder(name) {
   const win = document.getElementById('folder-window');
   const title = document.getElementById('folder-title');
   const pathEl = document.getElementById('folder-path');
@@ -203,6 +203,15 @@ function openFolder(name) {
   // Remove old status bar if any
   const oldStatus = win.querySelector('.folder-status-bar');
   if (oldStatus) oldStatus.remove();
+
+  // Always fetch latest files from server before showing folder
+  try {
+    const res = await fetch('/api/files');
+    const files = await res.json();
+    folderFiles = files;
+  } catch (e) {
+    console.warn('Could not fetch files:', e);
+  }
 
   if (name === '404') {
     // Show real uploaded files first, then fake files
