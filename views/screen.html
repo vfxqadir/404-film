@@ -127,6 +127,33 @@
       </div>
     </div>
 
+    <!-- AUDIO PLAYER -->
+    <div id="audio-player" class="window hidden">
+      <div class="window-titlebar audio-titlebar">
+        <span id="audio-title">Audio Player</span>
+        <div class="window-controls">
+          <button class="win-btn minimize">─</button>
+          <button class="win-btn close" onclick="closeAudioPlayer()">×</button>
+        </div>
+      </div>
+      <div class="audio-body">
+        <div class="audio-visualizer">
+          <div class="audio-eq-bar"></div><div class="audio-eq-bar"></div><div class="audio-eq-bar"></div>
+          <div class="audio-eq-bar"></div><div class="audio-eq-bar"></div><div class="audio-eq-bar"></div>
+          <div class="audio-eq-bar"></div><div class="audio-eq-bar"></div><div class="audio-eq-bar"></div>
+        </div>
+        <div class="audio-track-name" id="audio-now-playing">No track loaded</div>
+        <div class="audio-controls">
+          <button class="audio-btn" id="audio-play-btn" onclick="toggleAudioPlayPause()">⏸</button>
+        </div>
+        <div class="audio-progress" id="audio-progress-bar" onclick="seekAudio(event)">
+          <div class="audio-progress-fill" id="audio-progress-fill"></div>
+        </div>
+        <div class="audio-time" id="audio-time">00:00 / 00:00</div>
+        <audio id="audio-element"></audio>
+      </div>
+    </div>
+
     <!-- RETRO BROWSER WINDOW -->
     <div id="browser-window" class="window hidden">
       <div class="window-titlebar browser-titlebar">

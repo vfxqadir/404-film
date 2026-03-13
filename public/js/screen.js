@@ -221,6 +221,17 @@ function openFolder(name) {
       <span class="status-size">1.02 TB</span>
     `;
     win.appendChild(statusBar);
+  } else if (name === 'music') {
+    // Show only .mp3 files in Music folder
+    const musicFiles = folderFiles.filter(f => f.ext === '.mp3');
+    if (musicFiles.length === 0) {
+      contents.innerHTML = '<div class="folder-empty">No music files — upload .mp3 from Control Panel</div>';
+    } else {
+      musicFiles.forEach(f => {
+        const el = createFileEntry(f);
+        contents.appendChild(el);
+      });
+    }
   } else {
     contents.innerHTML = '<div class="folder-empty">Empty folder</div>';
   }
@@ -234,7 +245,7 @@ function openFolder(name) {
 function createFileEntry(file) {
   const div = document.createElement('div');
   div.className = 'folder-file';
-  const iconMap = { '.mp4': '🎬', '.txt': '📄', '.dat': '💾', '.bin': '⬛', '.log': '📋', '.enc': '🔒', '.raw': '📦', '.bak': '🗄', '.tmp': '⏳', '.key': '🔑' };
+  const iconMap = { '.mp3': '🎵', '.mp4': '🎬', '.txt': '📄', '.dat': '💾', '.bin': '⬛', '.log': '📋', '.enc': '🔒', '.raw': '📦', '.bak': '🗄', '.tmp': '⏳', '.key': '🔑' };
   const icon = iconMap[file.ext] || '📄';
   const sizeStr = file.size > 1024 * 1024
     ? (file.size / (1024 * 1024)).toFixed(1) + ' MB'
@@ -252,6 +263,8 @@ function createFileEntry(file) {
       openTextFile(file);
     } else if (file.ext === '.mp4') {
       openVideoFile(file);
+    } else if (file.ext === '.mp3') {
+      openAudioFile(file);
     }
   });
 
@@ -357,6 +370,64 @@ function closeVideoPlayer() {
   removeFromStack('video-player');
 }
 
+// ── AUDIO PLAYER ──
+function openAudioFile(file) {
+  const player = document.getElementById('audio-player');
+  const audio = document.getElementById('audio-element');
+  document.getElementById('audio-title').textContent = file.originalName;
+  document.getElementById('audio-now-playing').textContent = file.originalName.replace(/\.mp3$/i, '');
+
+  audio.src = file.url;
+  audio.play();
+
+  player.classList.remove('hidden');
+  pushWindow('audio-player');
+
+  // Progress
+  audio.addEventListener('timeupdate', updateAudioProgress);
+  audio.addEventListener('ended', () => {
+    document.getElementById('audio-play-btn').textContent = '▶';
+  });
+}
+
+function updateAudioProgress() {
+  const audio = document.getElementById('audio-element');
+  if (audio.duration) {
+    const pct = (audio.currentTime / audio.duration) * 100;
+    document.getElementById('audio-progress-fill').style.width = pct + '%';
+    document.getElementById('audio-time').textContent =
+      formatTime(audio.currentTime) + ' / ' + formatTime(audio.duration);
+  }
+}
+
+function toggleAudioPlayPause() {
+  const audio = document.getElementById('audio-element');
+  const btn = document.getElementById('audio-play-btn');
+  if (audio.paused) {
+    audio.play();
+    btn.textContent = '⏸';
+  } else {
+    audio.pause();
+    btn.textContent = '▶';
+  }
+}
+
+function seekAudio(e) {
+  const audio = document.getElementById('audio-element');
+  const bar = document.getElementById('audio-progress-bar');
+  const rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = pct * audio.duration;
+}
+
+function closeAudioPlayer() {
+  const audio = document.getElementById('audio-element');
+  audio.pause();
+  audio.src = '';
+  closeWindow('audio-player');
+  removeFromStack('audio-player');
+}
+
 // ── WINDOW STACK (tracks open order for ESC) ──
 const windowStack = [];
 
@@ -454,6 +525,8 @@ document.addEventListener('keydown', (e) => {
       closeWindow('folder-window');
     } else if (topWindow === 'browser-window') {
       closeBrowser();
+    } else if (topWindow === 'audio-player') {
+      closeAudioPlayer();
     }
   }
 });

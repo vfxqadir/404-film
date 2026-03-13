@@ -26,7 +26,7 @@ const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
-    if (['.txt', '.mp4'].includes(ext)) {
+    if (['.txt', '.mp4', '.mp3'].includes(ext)) {
       cb(null, true);
     } else {
       cb(new Error('Only .txt and .mp4 files allowed'));
