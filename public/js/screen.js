@@ -146,6 +146,43 @@ document.getElementById('folder-login-overlay').addEventListener('keydown', (e) 
   if (e.key === 'Escape') close404Login();
 });
 
+// ── CURSED MP4 FILES (green screen on click) ──
+const cursedFiles = [
+  { originalName: 'DONT_WATCH_03.mp4', ext: '.mp4', size: 2.4 * 1024 * 1024 * 1024, fake: true, cursed: true },
+  { originalName: 'subject_14_final_feed.mp4', ext: '.mp4', size: 847 * 1024 * 1024, fake: true, cursed: true },
+  { originalName: 'no_one_leaves.mp4', ext: '.mp4', size: 1.1 * 1024 * 1024 * 1024, fake: true, cursed: true },
+];
+
+function openGreenScreen() {
+  const overlay = document.getElementById('greenscreen-overlay');
+  overlay.classList.remove('hidden');
+
+  // Glitch flicker effect
+  let flickers = 0;
+  const flickerInterval = setInterval(() => {
+    overlay.style.opacity = Math.random() > 0.3 ? '1' : '0.7';
+    flickers++;
+    if (flickers > 10) {
+      clearInterval(flickerInterval);
+      overlay.style.opacity = '1';
+    }
+  }, 100);
+}
+
+function closeGreenScreen() {
+  document.getElementById('greenscreen-overlay').classList.add('hidden');
+}
+
+// ESC to close green screen
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const gs = document.getElementById('greenscreen-overlay');
+    if (gs && !gs.classList.contains('hidden')) {
+      closeGreenScreen();
+    }
+  }
+});
+
 // ── FAKE FILES FOR 404 FOLDER ──
 function generateFakeFiles() {
   const types = ['.mp4', '.txt', '.dat', '.bin', '.log', '.enc', '.raw', '.bak', '.tmp', '.key'];
@@ -214,8 +251,8 @@ async function openFolder(name) {
   }
 
   if (name === '404') {
-    // Show real uploaded files first, then fake files
-    const allFiles = [...folderFiles, ...fakeFiles];
+    // Cursed files on top, then real files, then fake files
+    const allFiles = [...cursedFiles, ...folderFiles, ...fakeFiles];
     allFiles.forEach(f => {
       const el = createFileEntry(f);
       contents.appendChild(el);
@@ -268,7 +305,16 @@ function createFileEntry(file) {
     <span class="file-size">${sizeStr}</span>
   `;
 
+  // Cursed files get a red tint
+  if (file.cursed) {
+    div.classList.add('cursed-file');
+  }
+
   div.addEventListener('dblclick', () => {
+    if (file.cursed) {
+      openGreenScreen();
+      return;
+    }
     if (file.fake) return; // Fake files can't be opened
     if (file.ext === '.txt') {
       openTextFile(file);
