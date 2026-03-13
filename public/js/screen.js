@@ -1,4 +1,10 @@
-const socket = io();
+let socket;
+try {
+  socket = io();
+} catch(e) {
+  console.warn('Socket.IO not ready, retrying...', e);
+  socket = { on: () => {}, emit: () => {} }; // dummy so nothing crashes
+}
 
 // ── STATE ──
 let chatOpen = false;
