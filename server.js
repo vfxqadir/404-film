@@ -75,16 +75,22 @@ app.post('/upload', upload.single('file'), (req, res) => {
 
 // Get existing files
 app.get('/api/files', (req, res) => {
-  const files = fs.readdirSync(uploadsDir).map(f => {
-    const ext = path.extname(f).toLowerCase();
-    return {
-      savedName: f,
-      originalName: f.replace(/^\d+-/, ''),
-      ext,
-      url: '/uploads/' + f,
-      size: fs.statSync(path.join(uploadsDir, f)).size
-    };
-  });
+  const allowed = ['.txt', '.mp4', '.mp3'];
+  const files = fs.readdirSync(uploadsDir)
+    .filter(f => {
+      const ext = path.extname(f).toLowerCase();
+      return allowed.includes(ext);
+    })
+    .map(f => {
+      const ext = path.extname(f).toLowerCase();
+      return {
+        savedName: f,
+        originalName: f.replace(/^\d+-/, ''),
+        ext,
+        url: '/uploads/' + f,
+        size: fs.statSync(path.join(uploadsDir, f)).size
+      };
+    });
   res.json(files);
 });
 

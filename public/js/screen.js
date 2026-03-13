@@ -240,6 +240,8 @@ async function openFolder(name) {
         const el = createFileEntry(f);
         contents.appendChild(el);
       });
+      // Auto-play the first (or only) MP3
+      openAudioFile(musicFiles[0]);
     }
   } else {
     contents.innerHTML = '<div class="folder-empty">Empty folder</div>';
