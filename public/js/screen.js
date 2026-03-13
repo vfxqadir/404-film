@@ -452,6 +452,7 @@ document.addEventListener('keydown', (e) => {
       closeWindow('text-editor');
     } else if (topWindow === 'folder-window') {
       closeWindow('folder-window');
+    }
   }
 });
 
