@@ -64,16 +64,20 @@ function handleLogin() {
   }, 100);
 }
 
-// Login event listeners
-document.addEventListener('DOMContentLoaded', () => {
+// Login event listeners + boot
+function initBoot() {
   document.getElementById('login-btn').addEventListener('click', handleLogin);
   document.getElementById('login-screen').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') handleLogin();
   });
-
-  // Start boot sequence
   runBootSequence();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initBoot);
+} else {
+  initBoot();
+}
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -134,13 +138,12 @@ function attempt404Login() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('folder-login-btn').addEventListener('click', attempt404Login);
-  document.getElementById('folder-login-cancel').addEventListener('click', close404Login);
-  document.getElementById('folder-login-overlay').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') attempt404Login();
-    if (e.key === 'Escape') close404Login();
-  });
+// Attach directly — script is at bottom of body, DOM is ready
+document.getElementById('folder-login-btn').addEventListener('click', attempt404Login);
+document.getElementById('folder-login-cancel').addEventListener('click', close404Login);
+document.getElementById('folder-login-overlay').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') attempt404Login();
+  if (e.key === 'Escape') close404Login();
 });
 
 // ── FAKE FILES FOR 404 FOLDER ──
