@@ -1366,6 +1366,18 @@ html, body {
   margin-top: 2px;
 }
 
+.browser-page .link-list li.real-result {
+  background: rgba(74, 158, 255, 0.05);
+  border-left: 2px solid #4a9eff;
+  padding-left: 8px;
+  margin-bottom: 4px;
+}
+
+.browser-page .link-list li.real-result a {
+  color: #7af;
+  font-size: 13px;
+}
+
 .browser-page .hit-counter {
   text-align: center;
   margin-top: 20px;

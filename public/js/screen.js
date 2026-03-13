@@ -896,22 +896,50 @@ function browserSearch() {
   }
 }
 
+// Known real websites that show up in search results
+const realSiteIndex = [
+  { keywords: ['soundcloud', 'music', 'songs', 'tracks', 'listen', 'audio', 'beats'], title: 'SoundCloud — Listen to free music and podcasts', url: 'https://soundcloud.com', desc: 'https://soundcloud.com — Stream music, upload tracks, and discover new artists. Free.' },
+  { keywords: ['youtube', 'video', 'watch', 'stream'], title: 'YouTube — Watch videos and more', url: 'https://youtube.com', desc: 'https://youtube.com — Watch, share, and discover videos.' },
+  { keywords: ['reddit', 'forum', 'community', 'discussion'], title: 'Reddit — Pair into communities', url: 'https://reddit.com', desc: 'https://reddit.com — Community forums and discussions.' },
+  { keywords: ['wikipedia', 'wiki', 'encyclopedia', 'info'], title: 'Wikipedia — The Free Encyclopedia', url: 'https://wikipedia.org', desc: 'https://wikipedia.org — Free online encyclopedia.' },
+  { keywords: ['github', 'code', 'programming', 'repository'], title: 'GitHub — Where the world builds software', url: 'https://github.com', desc: 'https://github.com — Code hosting and collaboration.' },
+  { keywords: ['twitter', 'x', 'tweets', 'social'], title: 'X (Twitter) — Social network', url: 'https://x.com', desc: 'https://x.com — Social media and news.' },
+  { keywords: ['google', 'search'], title: 'Google — Search engine', url: 'https://google.com', desc: 'https://google.com — Search the web.' },
+  { keywords: ['instagram', 'photos', 'reels'], title: 'Instagram — Photos and Reels', url: 'https://instagram.com', desc: 'https://instagram.com — Share photos and short videos.' },
+];
+
 function browserSearchResults(query) {
-  const results = [
+  const q = query.toLowerCase();
+  const results = [];
+
+  // Check for matching real websites first
+  realSiteIndex.forEach(site => {
+    if (site.keywords.some(kw => q.includes(kw))) {
+      results.push({ title: site.title, url: site.url, desc: site.desc, real: true });
+    }
+  });
+
+  // Add the fake void results after
+  results.push(
     { title: 'DarkBoard Forums — ' + query, url: 'void://darkboard', desc: 'Discussion threads matching "' + query + '" — 47 results found' },
     { title: query + ' — The Vault Archives', url: 'void://vault', desc: 'Encrypted files related to your search — Access restricted' },
     { title: 'Network logs mentioning "' + query + '"', url: 'void://tracker', desc: 'Connection records from the past 24 hours' },
     { title: '[REDACTED] — ' + query, url: '#', desc: 'This result has been removed by an administrator' },
     { title: query + ' discussion — Node 7 Archive', url: '#', desc: 'Archived thread from 2023 — May no longer be accessible' },
-  ];
+  );
 
   let html = `<div class="browser-page">
-    <h1>Search results for "${query}"</h1>
+    <h1>Search results for "${escapeHtml(query)}"</h1>
     <p style="color:#555;font-size:11px">About ${Math.floor(Math.random() * 9000 + 1000)} results (0.${Math.floor(Math.random() * 90 + 10)}s)</p>
     <ul class="link-list">`;
 
   results.forEach(r => {
-    html += `<li><a onclick="browserGo('${r.url}')">${r.title}</a><div class="link-desc">${r.desc}</div></li>`;
+    const urlSafe = r.url.replace(/'/g, "\\'");
+    if (r.real) {
+      html += `<li class="real-result"><a onclick="browserGo('${urlSafe}')">${r.title}</a><div class="link-desc" style="color:#4a4">${r.desc}</div></li>`;
+    } else {
+      html += `<li><a onclick="browserGo('${urlSafe}')">${r.title}</a><div class="link-desc">${r.desc}</div></li>`;
+    }
   });
 
   html += `</ul><div class="hit-counter"><a onclick="browserGo('void://home')">Home</a></div></div>`;
