@@ -1247,6 +1247,26 @@ html, body {
   font-family: 'JetBrains Mono', 'Courier New', monospace;
 }
 
+.browser-iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: #fff;
+}
+
+.browser-iframe.hidden {
+  display: none;
+}
+
+/* When iframe is active, hide the content div */
+#browser-window.iframe-mode #browser-content {
+  display: none;
+}
+
+#browser-window.iframe-mode .browser-iframe {
+  display: block;
+}
+
 .browser-statusbar {
   display: flex;
   justify-content: space-between;

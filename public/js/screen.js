@@ -730,51 +730,130 @@ function openBrowser() {
 }
 
 function closeBrowser() {
-  document.getElementById('browser-window').classList.add('hidden');
+  const win = document.getElementById('browser-window');
+  const iframe = document.getElementById('browser-iframe');
+  win.classList.add('hidden');
+  win.classList.remove('iframe-mode');
+  iframe.classList.add('hidden');
+  iframe.src = '';
   removeFromStack('browser-window');
+}
+
+function isRealUrl(url) {
+  return url.startsWith('http://') || url.startsWith('https://');
+}
+
+function isSoundCloudUrl(url) {
+  return url.includes('soundcloud.com');
+}
+
+function getSoundCloudEmbedUrl(url) {
+  // SoundCloud oEmbed-compatible widget URL
+  // Works for tracks, playlists, artists
+  return 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(url) + '&color=%234a9eff&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=true';
+}
+
+function smartUrl(input) {
+  // If it already has a protocol, return as-is
+  if (input.startsWith('http://') || input.startsWith('https://') || input.startsWith('void://')) {
+    return input;
+  }
+  // If it looks like a domain (has a dot), add https://
+  if (input.includes('.') && !input.includes(' ')) {
+    return 'https://' + input;
+  }
+  // Otherwise treat as a search on void
+  return 'void://search?q=' + encodeURIComponent(input);
 }
 
 function browserGo(url) {
   const content = document.getElementById('browser-content');
+  const iframe = document.getElementById('browser-iframe');
   const urlInput = document.getElementById('browser-url');
   const status = document.getElementById('browser-status');
   const titleEl = document.getElementById('browser-window-title');
+  const win = document.getElementById('browser-window');
 
+  // Smart URL processing
+  url = smartUrl(url);
   urlInput.value = url;
-  status.textContent = 'Loading...';
+  status.textContent = 'Connecting...';
 
-  // Loading animation
-  content.innerHTML = '<div class="browser-loading">Loading<span class="dots"></span></div>';
+  // Switch to iframe mode for real URLs
+  if (isRealUrl(url)) {
+    content.innerHTML = '<div class="browser-loading">Loading<span class="dots"></span></div>';
+    win.classList.add('iframe-mode');
 
-  setTimeout(() => {
-    const page = browserPages[url];
-    if (page) {
-      content.innerHTML = page.html;
-      titleEl.textContent = 'NetVoid - ' + page.title;
-      status.textContent = 'Done';
-    } else if (url.startsWith('void://search?q=')) {
-      const query = decodeURIComponent(url.replace('void://search?q=', ''));
-      content.innerHTML = browserSearchResults(query);
-      titleEl.textContent = 'NetVoid - Search: ' + query;
-      status.textContent = 'Done — ' + Math.floor(Math.random() * 9000 + 1000) + ' results';
+    if (isSoundCloudUrl(url)) {
+      // SoundCloud uses their own embed widget (no proxy needed)
+      const embedUrl = getSoundCloudEmbedUrl(url);
+      iframe.src = embedUrl;
+      iframe.classList.remove('hidden');
+      content.innerHTML = '';
+      titleEl.textContent = 'NetVoid - SoundCloud';
+      status.textContent = 'Connected — SoundCloud';
     } else {
-      content.innerHTML = `<div class="browser-page"><div class="error-page">
-        <h1>Connection Failed</h1>
-        <p>NetVoid cannot establish a secure connection to<br><strong style="color:#7af">${url}</strong></p>
-        <p style="margin-top:16px">Error: VOID_ERR_CONNECTION_REFUSED (-404)</p>
-        <p style="margin-top:20px"><a onclick="browserGo('void://home')">Return to Home</a></p>
-      </div></div>`;
-      titleEl.textContent = 'NetVoid - Error';
-      status.textContent = 'Error: Connection refused';
+      // Use proxy for other sites
+      const proxyUrl = '/proxy?url=' + encodeURIComponent(url);
+      iframe.src = proxyUrl;
+      iframe.classList.remove('hidden');
+      content.innerHTML = '';
+
+      try {
+        const hostname = new URL(url).hostname;
+        titleEl.textContent = 'NetVoid - ' + hostname;
+        status.textContent = 'Connected — ' + hostname;
+      } catch {
+        titleEl.textContent = 'NetVoid - Loading...';
+        status.textContent = 'Connected';
+      }
     }
 
-    // Update history
-    if (browserHistoryIndex < browserHistory.length - 1) {
-      browserHistory.splice(browserHistoryIndex + 1);
-    }
-    browserHistory.push(url);
-    browserHistoryIndex = browserHistory.length - 1;
-  }, 300 + Math.random() * 500);
+    iframe.onload = () => {
+      status.textContent = 'Done';
+    };
+    iframe.onerror = () => {
+      status.textContent = 'Error loading page';
+    };
+  } else {
+    // Internal void:// pages — use the content div
+    win.classList.remove('iframe-mode');
+    iframe.classList.add('hidden');
+    iframe.src = '';
+
+    status.textContent = 'Loading...';
+    content.innerHTML = '<div class="browser-loading">Loading<span class="dots"></span></div>';
+
+    setTimeout(() => {
+      const page = browserPages[url];
+      if (page) {
+        content.innerHTML = page.html;
+        titleEl.textContent = 'NetVoid - ' + page.title;
+        status.textContent = 'Done';
+      } else if (url.startsWith('void://search?q=')) {
+        const query = decodeURIComponent(url.replace('void://search?q=', ''));
+        content.innerHTML = browserSearchResults(query);
+        titleEl.textContent = 'NetVoid - Search: ' + query;
+        status.textContent = 'Done — ' + Math.floor(Math.random() * 9000 + 1000) + ' results';
+      } else {
+        content.innerHTML = `<div class="browser-page"><div class="error-page">
+          <h1>Connection Failed</h1>
+          <p>NetVoid cannot establish a secure connection to<br><strong style="color:#7af">${escapeHtml(url)}</strong></p>
+          <p style="margin-top:16px">Error: VOID_ERR_CONNECTION_REFUSED (-404)</p>
+          <p style="margin-top:20px"><a onclick="browserGo('void://home')">Return to Home</a></p>
+        </div></div>`;
+        titleEl.textContent = 'NetVoid - Error';
+        status.textContent = 'Error: Connection refused';
+      }
+    }, 300 + Math.random() * 500);
+  }
+
+  // Update history
+  if (browserHistoryIndex < browserHistory.length - 1) {
+    browserHistory.splice(browserHistoryIndex + 1);
+  }
+  browserHistory.push(url);
+  browserHistoryIndex = browserHistory.length - 1;
 }
 
 function browserNavigate() {
