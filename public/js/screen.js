@@ -125,11 +125,13 @@ function attempt404Login() {
   }
 }
 
-document.getElementById('folder-login-btn').addEventListener('click', attempt404Login);
-document.getElementById('folder-login-cancel').addEventListener('click', close404Login);
-document.getElementById('folder-login-overlay').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') attempt404Login();
-  if (e.key === 'Escape') close404Login();
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('folder-login-btn').addEventListener('click', attempt404Login);
+  document.getElementById('folder-login-cancel').addEventListener('click', close404Login);
+  document.getElementById('folder-login-overlay').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') attempt404Login();
+    if (e.key === 'Escape') close404Login();
+  });
 });
 
 // ── FAKE FILES FOR 404 FOLDER ──
