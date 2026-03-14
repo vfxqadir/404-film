@@ -122,19 +122,26 @@ function close404Login() {
 
 function attempt404Login() {
   const pass = document.getElementById('folder-login-pass').value;
+  const err = document.getElementById('folder-login-error');
+
+  // Clear previous error state before checking
+  err.classList.add('hidden');
 
   if (pass === '404') {
     folder404Unlocked = true;
     close404Login();
-    openFolder('404');
+    // Small delay to ensure overlay is fully hidden before opening folder
+    setTimeout(() => openFolder('404'), 50);
   } else {
-    const err = document.getElementById('folder-login-error');
     err.classList.remove('hidden');
     err.textContent = 'ACCESS DENIED';
     // Re-trigger shake animation
     err.style.animation = 'none';
     err.offsetHeight; // force reflow
     err.style.animation = '';
+    // Clear input for next attempt
+    document.getElementById('folder-login-pass').value = '';
+    document.getElementById('folder-login-pass').focus();
   }
 }
 
