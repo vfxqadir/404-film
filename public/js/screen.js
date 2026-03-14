@@ -10,13 +10,13 @@ try {
 let chatOpen = false;
 let folderFiles = [];
 const activeTriggers = new Set();
-const ACTOR_NAME = 'Mubashir';
+const ACTOR_NAME = 'Cypher';
 
 // ── BOOT SEQUENCE ──
 const BIOS_LINES = [
   { text: '', delay: 300 },
   { text: '  VOID OS 3.2.1', delay: 400, cls: '' },
-  { text: '  Copyright (c) 2024 VOID Systems Ltd.', delay: 200, cls: 'bios-ok' },
+  { text: '  Copyright (c) 2014 VOID Systems Ltd.', delay: 200, cls: 'bios-ok' },
   { text: '', delay: 300 },
   { text: '  Initializing secure boot...          [OK]', delay: 500, cls: '' },
   { text: '  Encrypting connection...             [OK]', delay: 600, cls: '' },
@@ -45,6 +45,21 @@ async function runBootSequence() {
   await sleep(800);
   document.getElementById('boot-screen').classList.add('hidden');
   document.getElementById('login-screen').classList.remove('hidden');
+
+  // Typewriter effect for login field
+  const userInput = document.getElementById('login-user');
+  const userText = userInput.value;
+  userInput.value = '';
+
+  async function typewriter(el, text, speed) {
+    for (let i = 0; i < text.length; i++) {
+      el.value += text[i];
+      await sleep(speed);
+    }
+  }
+
+  await typewriter(userInput, userText, 70);
+
   document.getElementById('login-btn').focus();
 }
 
